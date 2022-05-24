@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = "/api/config";
+const BASE_URL = "http://ec2-54-145-239-81.compute-1.amazonaws.com/api/config";
 
 class CategoryService {
 

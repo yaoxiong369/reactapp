@@ -1,19 +1,20 @@
 import axios from 'axios';
 import {message} from "antd";
 
-const USER_API_BASE_URL = "/admin/acl";
+const USER_API_BASE_URL = "http://ec2-54-145-239-81.compute-1.amazonaws.com/admin/acl";
 
 class UserService {
     isAuthenticated = false;
 
     signin(userInput, callback) {
-        message.warn("user begin post with "+userInput.username);
+        message.warn("user begin post with " + userInput.username);
+        // axios.create({withCredentials: true}).post(USER_API_BASE_URL + '/login?username='+userInput.username+"&password="+userInput.password)
         axios.create({withCredentials: true}).post(USER_API_BASE_URL + '/login', userInput)
             .then((res) => {
-                message.warn("user mid post with return "+res.data.success);
-                console.log("res", res);
+                    message.warn("user mid post with return " + res.data.success);
+                    console.log("res", res);
                     if (res && res.data && res.data.success && res.data.data) {
-                        message.warn("user after post with return "+res.data.data.object);
+                        message.warn("user after post with return " + res.data.data.object);
                         this.isAuthenticated = true;
                         callback(res.data.data.object);
                     } else {
@@ -22,7 +23,7 @@ class UserService {
                 }
             )
             .catch((res) => {
-                console.log("res",res);
+                console.log("res", res);
                 message.error("exception");
             });
         // setTimeout(callback, 100); // fake async
@@ -40,7 +41,7 @@ class UserService {
                 }
             )
             .catch((res) => {
-                console.log("res",res);
+                console.log("res", res);
                 message.error("exception");
             });
     };

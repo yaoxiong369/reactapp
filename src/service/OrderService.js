@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const ORDER_API_BASE_URL = "/api/order";
+const ORDER_API_BASE_URL = "http://ec2-54-145-239-81.compute-1.amazonaws.com/api/order";
 
 class OrderService {
 
