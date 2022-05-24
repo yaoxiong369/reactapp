@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {message} from "antd";
 
-const USER_API_BASE_URL = "http://ec2-54-145-239-81.compute-1.amazonaws.com/admin/acl";
+const USER_API_BASE_URL = "/admin/acl";
 
 class UserService {
     isAuthenticated = false;

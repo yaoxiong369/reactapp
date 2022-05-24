@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const COMMODITY_API_BASE_URL = "http://ec2-54-145-239-81.compute-1.amazonaws.com/api/commodity";
+const COMMODITY_API_BASE_URL = "/api/commodity";
 
 class CommodityService {
 
