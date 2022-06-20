@@ -16,7 +16,7 @@ const ListCommodity = () => {
     const [storageLocation, setStorageLocation] = useState([]);
     const [pageInfo, setPageInfo] = useState({
         currentPage: 1,
-        totalPage: 9
+        pageSize: 12
     })
 
     const getStorageLocationList = () => {
@@ -59,13 +59,14 @@ const ListCommodity = () => {
             });
     }
 
-    const handlePage = (page = 1, page_size = 9) => {
+    const handlePage = (page , page_size) => {
         console.log("page condition", condition);
         CommodityService.getCommodityList(page, page_size, condition)
             .then((res) => {
                     setCommoditys(res.data.data.commodityList);
                     setPageInfo({
                         currentPage: page,
+                        pageSize:page_size,
                         totalPage: res.data.data.total
                     });
 
@@ -74,18 +75,17 @@ const ListCommodity = () => {
             .catch((res) => {
                 console.log("res", res);
                 alert("error get commodity list");
-                // alert(res.data.message);
             });
     }
 
     useEffect(() => {
         getCategoryAndUnit();
         getStorageLocationList();
-        handlePage();
+        handlePage(pageInfo.currentPage,pageInfo.pageSize);
     }, [condition]);
 
     return (
-        <Row gutter={16} justify="start">
+        <Row gutter={16} justify="center" style={{width:1012}}>
             <Col span={6}>
                 <Menu onClick={(info) => {
                     console.log("Menu.Item.key", info.key);
@@ -142,11 +142,11 @@ const ListCommodity = () => {
                     <Pagination total={pageInfo.totalPage}
                                 current={pageInfo.currentPage}
                                 defaultCurrent={1}
-                                defaultPageSize={10}
+                                defaultPageSize={12}
                                 showSizeChanger
                                 showQuickJumper
-                                pageSize={10}
-                                pageSizeOptions={[10, 20, 30]}
+                                pageSize={pageInfo.pageSize}
+                                pageSizeOptions={[12, 24, 36]}
                                 onChange={handlePage}
                                 showTotal={total => `Total ${pageInfo.totalPage} items`}
                     />

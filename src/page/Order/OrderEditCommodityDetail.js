@@ -32,14 +32,6 @@ const Detail = ({visible, onCreate, onCancel, commodtiyWithPurchase}) => {
 
     }
 
-    // const handleInput = (purchase, e) => {
-    //
-    //     purchase.salesVolume = e.target.value
-    //     if (purchase.id != null) {
-    //         orderDetailMap.set(purchase.id, purchase);
-    //     }
-    //
-    // }
     form.setFieldsValue({name: commodtiyWithPurchase.name});
     form.setFieldsValue({remain: commodtiyWithPurchase.remain});
     form.setFieldsValue({unit: commodtiyWithPurchase.unit});
@@ -58,7 +50,6 @@ const Detail = ({visible, onCreate, onCancel, commodtiyWithPurchase}) => {
                 salesVolume: <InputNumber min={0.0} max={100000.0} defaultValue={0.0} step="1.0" ref={volumeInput}
                                           onChange={handleInput.bind(this, purchaseListJson[i])}
                 />,
-                // salesVolume: <input onChange={handleInput.bind(this, purchaseListJson[i])} type="textarea"/>,
             });
         }
     }
@@ -69,10 +60,12 @@ const Detail = ({visible, onCreate, onCancel, commodtiyWithPurchase}) => {
             afterClose={() => {
                 form.resetFields();
             }}
+            width={600}
             visible={visible}
-            title="Create a new collection"
+            title="Order options"
             okText="Create"
             cancelText="Cancel"
+            destroyOnClose={true}
             onCancel={onCancel}
             onOk={() => {
 
@@ -160,7 +153,16 @@ const OrderEditCommodityDetail = (props) => {
                 message.success(res.data.message);
                 Modal.destroyAll();
                 setVisible(false);
-                navigate("/addorder", {replace: true});
+                let innerTotalPrice = 0;
+                let innerItemCount = 0;
+                values.purchases.forEach(function (value, key, mapObj) {
+                    innerTotalPrice += value.salesVolume * values.sellPrice;
+                    innerItemCount += value.salesVolume;
+                });
+                console.log('innerTotalPrice ', innerTotalPrice);
+                console.log('innerItemCount ', innerItemCount);
+                props.setTotalPriceAndItemCount(innerTotalPrice, innerItemCount);
+                // navigate("/addorder", {replace: true});
             } else if (res.data.code == 20002) {
                 navigate("/login", {replace: true});
             } else {

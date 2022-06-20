@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import OrderService from "../../service/OrderService";
-import {Button, Col, Divider, Form, Input, message, Modal, Row, Space} from "antd";
+import {Avatar, Button, Col, Divider, Form, Input, message, Modal, Row, Space} from "antd";
 import {FileAddOutlined} from "@ant-design/icons";
 import {useNavigate} from "react-router";
+import JsonUtile from "../../util/JsonUtile";
 
 
 const Detail = ({visible, onCreate, onCancel, orderData, orderNumber,totalPrice,itemCount, remarks,customerNumber}) => {
@@ -22,7 +23,7 @@ const Detail = ({visible, onCreate, onCancel, orderData, orderNumber,totalPrice,
             afterClose={()=>{form.resetFields();}}
             width={600}
             visible={visible}
-            title="Create a new collection"
+            title="Place order"
             okText="Create"
             cancelText="Cancel"
             onCancel={onCancel}
@@ -51,9 +52,9 @@ const Detail = ({visible, onCreate, onCancel, orderData, orderNumber,totalPrice,
                              style={{borderBottomWidth: 1, borderBottomColor: 777}} align="middle">
                             <Col span={4} offset={1}>
                                 <Space>
-                                    <img alt="example" style={{width: '100%'}}
-                                         src='http://bpic.588ku.com/element_pic/01/37/87/65573c663f50dfd.jpg'
-                                    />
+                                    <Avatar size={48}
+                                            src={(data.picture && JsonUtile.jsonToString(data.picture)['url1'])  == null ?
+                                                'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png' : JsonUtile.jsonToString(data.picture)['url1']}/>
                                     <p> {data.name} </p>
                                 </Space>
                             </Col>

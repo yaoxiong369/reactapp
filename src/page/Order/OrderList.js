@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Col, DatePicker, Divider, message, Row, Space, Table, Tag} from "antd";
+import {Button, Col, DatePicker, Divider, message, Popconfirm, Row, Space, Table, Tag} from "antd";
 import {CheckSquareOutlined, DeleteOutlined, FileAddOutlined, FormatPainterOutlined} from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import OrderService from "../../service/OrderService";
@@ -76,17 +76,34 @@ const OrderList = () => {
                         <FormatPainterOutlined style={{fontSize: '16px', color: '#5555FF'}}/>
                     </Link>
                     <a>
-                        <DeleteOutlined style={{fontSize: '16px', color: '#FF0000'}} onClick={()=>updataOrderStatus(record.orderNumber,"delete")}/>
+                        <Popconfirm
+                            placement="top"
+                            title="Are you sure to delete this order"
+                            onConfirm={() => updataOrderStatus(record.orderNumber, "delete")}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <DeleteOutlined style={{fontSize: '16px', color: '#FF0000'}}/>
+                        </Popconfirm>
                     </a>
                     <a>
-                        <CheckSquareOutlined style={{fontSize: '16px', color: '#00DD00'}} onClick={()=>updataOrderStatus(record.orderNumber,"finish")}/>
+                        <Popconfirm
+                            placement="top"
+                            title="Are you sure to finish this order"
+                            onConfirm={() => updataOrderStatus(record.orderNumber, "finish")}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <CheckSquareOutlined style={{fontSize: '16px', color: '#00DD00'}}/>
+                        </Popconfirm>
                     </a>
                 </Space>
             ),
         },
     ];
+
     // updataOrderStatus(record.orderNumber,"delete")
-    function updataOrderStatus(orderNumber, type,e){
+    function updataOrderStatus(orderNumber, type, e) {
         const request = (type == "delete") ? OrderService.deleteOrder(orderNumber) : OrderService.finishOrder(orderNumber);
 
         request.then((res) => {
@@ -94,8 +111,8 @@ const OrderList = () => {
                     message.success("operation success!");
                     getOrderList(pageInfo.currentPage, pageInfo.pageSize);
                 } else if (res.data.code == 20002) {
-                    navigate("/login" ,{replace: true});
-                }else {
+                    navigate("/login", {replace: true});
+                } else {
                     message.error(res.data.message);
                 }
             }
@@ -118,8 +135,8 @@ const OrderList = () => {
                             totalPage: res.data.data.total,
                             pageSize: pageSize,
                         });
-                    }else if (res.data.code == 20002) {
-                        navigate("/login" ,{replace: true});
+                    } else if (res.data.code == 20002) {
+                        navigate("/login", {replace: true});
                     } else {
                         message.error("get order list fail!");
                     }

@@ -87,9 +87,9 @@ const Plan = () => {
     return (
 
 
-        <div>
-            <Row gutter={16}>
-                <Col span={18} order={1}>
+        <div style={{width:1012}}>
+            <Row gutter={16}  justify="center">
+                <Col span={17} order={1}>
                     <div>
                         <Chart indice={orderCount} titleName='Daily Orders' yAxisName='Order quantity'
                                id='orderCount'></Chart>
@@ -97,7 +97,7 @@ const Plan = () => {
                         <Chart indice={revenue} titleName='Daily Revenue' yAxisName='Revenue' id='revenue'></Chart>
                     </div>
                 </Col>
-                <Col span={6} order={2} style={{backgroundColor: '#fff'}}>
+                <Col span={7} order={2} style={{backgroundColor: '#fff'}}>
                     <Card title="Timeline" size="small">
                         <Timeline>
                             {timeLines.map(

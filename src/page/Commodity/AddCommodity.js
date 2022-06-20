@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
-import {Button, Modal, Form, Input, Radio, Select, Col, message} from 'antd';
+import {Button, Form, Input, message, Modal, Select} from 'antd';
 import PicturesWall from '../../components/PicturesWall'
 import {EditOutlined, PlusCircleOutlined} from "@ant-design/icons";
-import Card1 from "./Card1";
 import CommodityService from "../../service/CommodityService";
 import {useNavigate} from 'react-router-dom'
 import JsonUtile from "../../util/JsonUtile";
@@ -16,9 +15,6 @@ const AddCommodity = ({visible, onCreate, onCancel, categorys, units, commodity}
 
     const arr = new Array()
     if (commodity) {
-        // console.log('commodity:', commodity);
-        // console.log('categorys:', categorys);
-        // console.log('units:', units);
         form.setFieldsValue({id: commodity.id});
         form.setFieldsValue({name: commodity.name});
         form.setFieldsValue({categoryName: commodity.categoryName});
@@ -29,10 +25,9 @@ const AddCommodity = ({visible, onCreate, onCancel, categorys, units, commodity}
         if ((commodity.picture && JsonUtile.jsonToString(commodity.picture)['url1']) != null) {
 
             let json = JsonUtile.jsonToString(commodity.picture);
-            // console.log('json', json)
 
             let i = 0;
-            // alert('picture num:'+json.length);
+
             for (let k in json) {
                 arr[i++] = {
                     uid: k,
@@ -42,7 +37,6 @@ const AddCommodity = ({visible, onCreate, onCancel, categorys, units, commodity}
                 }
             }
             console.log('arr', arr)
-            // setFileList(arr)
         }
 
     }
@@ -50,7 +44,7 @@ const AddCommodity = ({visible, onCreate, onCancel, categorys, units, commodity}
     return (
         <Modal
             visible={visible}
-            title="Create a new commodity"
+            title="Commodity"
             okText="Create"
             cancelText="Cancel"
             destroyOnClose={true}
@@ -81,7 +75,7 @@ const AddCommodity = ({visible, onCreate, onCancel, categorys, units, commodity}
                 >
                     <Input/>
                 </Form.Item>
-                <Form.Item label="wall"
+                <Form.Item
                 >
                     <PicturesWall form={form} arr={arr}/>
                 </Form.Item>
@@ -171,12 +165,6 @@ const CollectionsPage = (props) => {
         trigerElement =  <Button type="primary" shape="round" onClick={() =>{setVisible(true)}} icon={<PlusCircleOutlined/>} size='large'>
                               Add Commodity
                          </Button>
-        //     <img alt="example" style={{width: '100%'}}
-        //                      onClick={() => {
-        //                          setVisible(true);
-        //                      }}
-        //                      src='http://bpic.588ku.com/element_pic/01/37/87/65573c663f50dfd.jpg'
-        // />
     } else {
         trigerElement = <EditOutlined key="edit" onClick={() => {
             setVisible(true);

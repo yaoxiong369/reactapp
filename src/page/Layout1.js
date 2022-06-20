@@ -14,7 +14,7 @@ const Layout1 = () => {
     let navigate = useNavigate();
 
     const handleLogout = () => {
-        auth.signout( () => {
+        auth.signout(() => {
             navigate("/login", {replace: true});
         });
     }
@@ -33,25 +33,28 @@ const Layout1 = () => {
                     </Col>
 
                     <Col span={4}>
-                        <Button type="primary" shape="round" onClick={handleLogout} icon={<LogoutOutlined />} size="large"/>
+                        <Button type="primary" shape="round" onClick={handleLogout} icon={<LogoutOutlined/>}
+                                size="large"/>
                     </Col>
                 </Row>
 
             </Header>
             <Content style={{padding: '20px 200px'}}>
-
-                <div className="site-layout-content">
-                    <div className="site-card-wrapper">
-                        <Outlet/>
+                <Row justify="center">
+                    <div className="site-layout-content">
+                        <div className="site-card-wrapper">
+                            <Outlet/>
+                        </div>
                     </div>
-                </div>
+                </Row>
             </Content>
-            <Footer style={{textAlign: 'center'}}>Ant Design ©2018 Created by Ant UED</Footer>
+            <Footer style={{textAlign: 'center'}}>
+                <h5>Created by : yaoxiong yang</h5>
+                <h5>This is just a model and does not implement any commercial
+                    business</h5></Footer>
         </Layout>
     )
 }
-
-
 
 
 export default Layout1

@@ -4,7 +4,6 @@ import './App.css';
 import {Layout} from 'antd';
 import Layout1 from './page/Layout1'
 import {HashRouter as Router, Route, Routes} from 'react-router-dom';
-import Login2 from "./page/Login/Login2";
 import NotFound from "./page/NotFound/NotFound";
 import ListCommodity from "./page/Commodity/ListCommodity";
 import PurchaseList from "./page/Purchase/PurchaseList";
@@ -43,7 +42,7 @@ function App() {
                                 </AuthRoute>}/>
 
                         </Route>
-                        <Route path="/app" element={<AuthRoute><ListCommodity/></AuthRoute>}/>
+                        {/*<Route path="/app" element={<AuthRoute><ListCommodity/></AuthRoute>}/>*/}
                         <Route path="/404" element={<NotFound/>}/>
                         <Route path="/login" element={<Login/>}/>
                         <Route path="*" element={<NotFound/>}/>

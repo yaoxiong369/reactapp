@@ -71,7 +71,6 @@ const PurchaseList = (props) => {
 
     const getPurchaseList = () => {
 
-        // console.log("P commodityId : "+params.commodityId)
         PurchaseService.getPurchaseList(condition)
             .then((res) => {
                 console.log("getPurchaseList res", res);

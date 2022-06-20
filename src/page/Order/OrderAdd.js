@@ -22,6 +22,7 @@ import OrderService from "../../service/OrderService";
 import {useSearchParams} from "react-router-dom";
 import PlaceOrder from "./PlaceOrder";
 import {useNavigate} from "react-router";
+import JsonUtile from "../../util/JsonUtile";
 
 const {RangePicker} = DatePicker;
 const {Meta} = Card;
@@ -32,17 +33,35 @@ const OrderAdd = (props) => {
     const [itemCount, setItemCount] = useState(0);
     const [searchParams, setSearchParams] = useSearchParams();
     const [keyword, setKeyword] = useState("");
-    const orderNumber = searchParams.get("orderNumber") == null ? uuid() : searchParams.get("orderNumber");
+    let orderNumber = searchParams.get("orderNumber") == null ? uuid() : searchParams.get("orderNumber");
     const [pageInfo, setPageInfo] = useState({
         currentPage: 1,
-        totalPage: 9
+        pageSize: 9
     })
     let navigate = useNavigate();
     console.log("remarks", searchParams.get("remarks"));
     console.log("customerNumber", searchParams.get("customerNumber"));
 
+    const [loadings, setLoadings] = useState([]);
 
-    const getCommodtiyWithPurchases = (page = 1, pageSize = 9) => {
+    const enterLoading = (index) => {
+        setLoadings(prevLoadings => {
+            const newLoadings = [...prevLoadings];
+            newLoadings[index] = true;
+            return newLoadings;
+        });
+
+        setTimeout(() => {
+            setLoadings(prevLoadings => {
+                const newLoadings = [...prevLoadings];
+                newLoadings[index] = false;
+                return newLoadings;
+            });
+        }, 3000);
+    };
+
+
+    const getCommodtiyWithPurchases = (page, pageSize) => {
         CommodityService.getCommodtiyWithPurchases(page, pageSize, orderNumber, keyword).then(
             (res) => {
                 if (res && res.data && res.data.success && res.data.data) {
@@ -51,8 +70,13 @@ const OrderAdd = (props) => {
                     setCommodtiyWithPurchases(res.data.data.object);
                     setTotalPrice(res.data.data.totalPrice);
                     setItemCount(res.data.data.itemCount);
-                }else if (res.data.code == 20002) {
-                    navigate("/login" ,{replace: true});
+                    setPageInfo({
+                        currentPage: page,
+                        pageSize:pageSize,
+                        totalPage: res.data.data.total
+                    });
+                } else if (res.data.code == 20002) {
+                    navigate("/login", {replace: true});
                 } else {
                     message.error("get commodtiy fail!");
                 }
@@ -64,9 +88,9 @@ const OrderAdd = (props) => {
         )
     }
 
-    function purchaseByPlus(commodtiyWithPurchase) {
+    function purchaseByPlus(commodtiyWithPurchase, index) {
         const purchaseListJson = JSON.parse(commodtiyWithPurchase.purchases);
-        console.log("commodtiyWithPurchase", purchaseListJson);
+        console.log("loadingNumber", index);
 
         if (commodtiyWithPurchase.purchases) {
             commodtiyWithPurchase.quantity = commodtiyWithPurchase.quantity != null ? commodtiyWithPurchase.quantity : 1
@@ -80,7 +104,7 @@ const OrderAdd = (props) => {
             }
 
             const request = OrderService.createOrder(orderVo);
-
+            enterLoading(index)
             request.then(res => {
                 console.log('response: ', res);
                 if (res.data.success) {
@@ -90,31 +114,39 @@ const OrderAdd = (props) => {
                     commodtiyWithPurchase.remain = commodtiyWithPurchase.remain - commodtiyWithPurchase.quantity;
                     setSearchParams({orderNumber})
                 } else if (res.data.code == 20002) {
-                    navigate("/login" ,{replace: true});
+                    navigate("/login", {replace: true});
                 } else {
                     message.error(res.data.message);
                 }
             });
         } else {
-            message.warn("请添加入货信息！");
+            message.warn("Please add incoming information！");
         }
+    }
+
+    const setTotalPriceAndItemCount = (price, count) => {
+        setTotalPrice(totalPrice + price);
+        setItemCount(itemCount + count);
+        setSearchParams({orderNumber});
     }
 
 
     useEffect(() => {
-        getCommodtiyWithPurchases();
+        getCommodtiyWithPurchases(pageInfo.currentPage,pageInfo.pageSize);
     }, [keyword])
 
     return (
 
 
-        <div>
+        <div style={{width: 1012}}>
             <Row gutter={16}>
                 <Col span={3} order={0}>
                     <h2>{totalPrice}</h2>
                 </Col>
                 <Col span={3} order={1}>
-                    <PlaceOrder orderNumber={orderNumber} totalPrice={totalPrice} itemCount={itemCount} remarks={searchParams.get("remarks")} customerNumber={searchParams.get("customerNumber")}/>
+                    <PlaceOrder orderNumber={orderNumber} totalPrice={totalPrice} itemCount={itemCount}
+                                remarks={searchParams.get("remarks")}
+                                customerNumber={searchParams.get("customerNumber")}/>
                     {/*<Button type="primary" shape="round" icon={<FileAddOutlined/>} size='large'/>*/}
                 </Col>
                 <Col span={6} order={2}>
@@ -133,14 +165,13 @@ const OrderAdd = (props) => {
 
             <Row gutter={[24, 24]}>
                 {commodtiyWithPurchases.map(
-                    commodtiyWithPurchase => {
+                    (commodtiyWithPurchase, index) => {
                         const description = "remain:" + commodtiyWithPurchase.remain + "(" + commodtiyWithPurchase.unit + ")";
                         return (
 
                             <Col span={8}>
                                 <Card
                                     hoverable
-                                    // style={{width: 300, marginTop: 16}}
                                     actions={[
 
                                         <div style={{marginLeft: 10, marginRight: 10}}>
@@ -148,6 +179,7 @@ const OrderAdd = (props) => {
                                                 <Col span={4}>
                                                     <div style={{width: 50}}>
                                                         <OrderEditCommodityDetail
+                                                            setTotalPriceAndItemCount = {setTotalPriceAndItemCount}
                                                             orderNumber={orderNumber}
                                                             commodtiyWithPurchase={commodtiyWithPurchase}/>
                                                     </div>
@@ -160,8 +192,8 @@ const OrderAdd = (props) => {
                                                         commodtiyWithPurchase.quantity = value
                                                     }}/>
                                                     <Button type="primary" shape="circle" icon={<PlusOutlined/>}
-                                                            size='small'
-                                                            onClick={() => purchaseByPlus(commodtiyWithPurchase)}/>
+                                                            size='small' loading={loadings[index]}
+                                                            onClick={() => purchaseByPlus(commodtiyWithPurchase, index)}/>
                                                 </Space></Col>
                                             </Row>
                                         </div>,
@@ -170,7 +202,8 @@ const OrderAdd = (props) => {
 
                                     <Meta
                                         avatar={<Avatar size={64}
-                                                        src="https://images.ctfassets.net/1sfeg2xcbtuz/1gyxYJdsGBBE5XkGj4eSS3/7568543e831a828d4e1190cc8f28d066/recipe-1.jpeg?w=1000&h=667&q=50&fm=webp"/>}
+                                                        src={(commodtiyWithPurchase.picture && JsonUtile.jsonToString(commodtiyWithPurchase.picture)['url1']) == null ?
+                                                            'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png' : JsonUtile.jsonToString(commodtiyWithPurchase.picture)['url1']}/>}
                                         title={commodtiyWithPurchase.name}
                                         description={description}
                                     />
@@ -190,8 +223,8 @@ const OrderAdd = (props) => {
                             defaultPageSize={9}
                             showSizeChanger
                             showQuickJumper
-                            pageSize={9}
-                            pageSizeOptions={[9, 19, 29]}
+                            pageSize={pageInfo.pageSize}
+                            pageSizeOptions={[9, 18, 27]}
                             onChange={getCommodtiyWithPurchases}
                             showTotal={total => `Total ${pageInfo.totalPage} items`}
                 />

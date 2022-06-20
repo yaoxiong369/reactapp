@@ -15,14 +15,18 @@ export function UserContextProvider(props) {
         console.log("userInput", userInput);
         return UserService.signin(userInput, (userInfo) => {
             setUser(userInfo);
-            message.warn("userInfo(login):"+ userInfo);
+            const obj = {
+                userInfo,
+                expire: new Date().getTime() + 1000 * 60 * 30
+            };
+            localStorage.setItem('user', JSON.stringify(obj));
             callback();
         });
     };
 
     let signout = (callback) => {
         return UserService.signout(() => {
-            message.warn("userInfo(logoutn):"+ user);
+            localStorage.removeItem('user');
             setUser(null);
             callback();
         });

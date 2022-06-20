@@ -55,7 +55,7 @@ body {
 	letter-spacing: 3px;
 }
 
-.login form {
+.login .form {
 	max-width: 420px;
 	margin: 30px auto;
 }

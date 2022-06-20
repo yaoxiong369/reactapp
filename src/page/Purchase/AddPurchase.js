@@ -61,10 +61,8 @@ const AddPurchase = ({visible, onCreate, onCancel, unit_name, commodity, purchas
                 name="form_in_modal"
                 initialValues={{
                     modifier: 'public',
-                    // 'purchasePrice': 123222,
-                    // 'purchaseQuantity': purchase.purchaseQuantity
                 }}
-                // onFinish={onFinish}
+
             >
                 <Form.Item label="id"
                            name="id"
@@ -132,12 +130,6 @@ const AddPurchase = ({visible, onCreate, onCancel, unit_name, commodity, purchas
                 <Form.Item
                     label="expiration date"
                     name="expirationDate"
-                    // rules={[
-                    //     {
-                    //         required: true,
-                    //         message: 'Please input the expiration date!',
-                    //     },
-                    // ]}
                 >
 
                     <DatePicker onChange={(date, dateString) => {
@@ -199,7 +191,7 @@ const AddPurchasePage = (props) => {
         let pictureUrl = (pictureJson && JsonUtile.jsonToString(pictureJson)['url1']) == null ?
             'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png' : JsonUtile.jsonToString(pictureJson)['url1'];
 
-        trigerElement = <img alt="example" style={{width: '100%'}} onClick={() => {
+        trigerElement = <img alt="example" style={{width: "100%",height:100}} onClick={() => {
             setVisible(true);
         }} src={pictureUrl}/>
     } else {
